@@ -1,0 +1,43 @@
+{
+  "name": "matatupulse",
+  "private": true,
+  "version": "1.0.0",
+  "description": "MatatuPulse — Public Transit Fleet, Remittance & Stage Dispatch OS",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "cap:sync": "npm run build && cap sync android",
+    "cap:add": "cap add android",
+    "apk:open": "cap open android",
+    "test:smoke": "esbuild scripts/smoke.jsx --bundle --format=esm --platform=node --jsx=automatic --external:jsdom --external:fake-indexeddb --outfile=scripts/smoke.built.mjs --log-level=error && node scripts/smoke.built.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kennedy-blip/matatupulse.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/core": "^8.6.2",
+    "dexie": "^4.4.7",
+    "dexie-react-hooks": "^4.4.0",
+    "framer-motion": "^14.14.0",
+    "lucide-react": "^1.75.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@vitejs/plugin-react": "^6.3.0",
+    "autoprefixer": "^10.6.2",
+    "esbuild": "^0.28.2",
+    "fake-indexeddb": "^6.2.8",
+    "jsdom": "^31.0.1",
+    "postcss": "^8.5.33",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.3.8",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}

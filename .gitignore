@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dev-dist/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.iml
+
+scripts/smoke.built.mjs
