@@ -18,6 +18,13 @@ MatatuPulse closes three everyday gaps:
 - Capacitor 8 Android wrapper and a GitHub Actions APK pipeline
 - SPA config for Vercel in `vercel.json`
 
+## Live deployments
+
+- **Web app:** https://matatupulse.vercel.app (production Vercel deployment from this branch)
+- **Android APK:** https://github.com/kennedy-blip/matatupulse/releases/latest/download/matatupulse.apk
+
+The in-app APK center detects the published release automatically and turns the **Download Android APK** button into a one-tap install.
+
 ## Quick start
 
 ```bash
