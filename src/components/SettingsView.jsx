@@ -40,6 +40,7 @@ const NUMBER_FIELDS = [
 export default function SettingsView() {
   const { settings, role, actor, online, notify, confirm } = useApp()
   const auditRows = useLiveQuery(() => db.audit.orderBy('at').reverse().limit(30).toArray(), [])
+  const allAuditRows = useLiveQuery(() => db.audit.orderBy('at').toArray(), [])
   const [stats, setStats] = useState(null)
   const [draft, setDraft] = useState({})
   const [saving, setSaving] = useState(false)
@@ -136,7 +137,7 @@ export default function SettingsView() {
   const exportAuditLog = () => {
     if (!can(role, 'exportAudit')) return
     const lines = [['Timestamp', 'Actor', 'Role', 'Action', 'Detail'].map(csvEscape).join(',')]
-    ;(auditRows || []).slice().reverse().forEach((row) => lines.push([
+    ;(allAuditRows || []).forEach((row) => lines.push([
       new Date(row.at).toISOString(), row.actor, row.role, row.action, row.detail
     ].map(csvEscape).join(',')))
     downloadText(`matatupulse-activity-${new Date().toISOString().slice(0, 10)}.csv`, lines.join('\n'))

@@ -23,6 +23,7 @@ import RemittanceLedger from './components/RemittanceLedger'
 import StageDispatch from './components/StageDispatch'
 import FleetCompliance from './components/FleetCompliance'
 import SettingsView from './components/SettingsView'
+import ThemeToggle from './components/ThemeToggle'
 
 const NAV = [
   { id: 'remittance', label: 'Remittance Ledger', short: 'Remittance', icon: WalletCards, hint: 'Collections, expenses & net owed' },
@@ -145,6 +146,7 @@ function TopBar({ tab, setTab }) {
         <div className="flex shrink-0 items-center gap-2">
           <span className="hidden text-right text-[11px] text-muted xl:block">{formatDate(localISO(), { weekday: 'short', day: 'numeric', month: 'short' })}</span>
           <div className="lg:hidden"><ConnectionBadge /></div>
+          <div className="hidden sm:block"><ThemeToggle compact /></div>
           <button className="btn btn-ghost hidden !px-3 sm:inline-flex" onClick={() => setTab('settings')} title="Open APK center">
             <Download size={15} /> <span className="hidden md:inline">APK Center</span>
           </button>

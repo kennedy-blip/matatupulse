@@ -120,7 +120,9 @@ export default function StageDispatch({ onNavigate }) {
   const avgTurnaround = departed.length
     ? Math.round(departed.reduce((total, entry) => total + (entry.turnaroundMinutes || 0), 0) / departed.length)
     : 0
-  const nextVehicle = active.find((entry) => entry.stage === (stageFilter === 'all' ? settings.stage : stageFilter) && entry.status === 'queued')
+  const nextVehicle = active
+    .filter((entry) => entry.status === 'queued' && (stageFilter === 'all' || entry.stage === stageFilter))
+    .sort((a, b) => a.createdAt - b.createdAt)[0]
 
   const addToQueue = async (event) => {
     event.preventDefault()

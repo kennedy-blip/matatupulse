@@ -37,7 +37,17 @@ const { act } = React
 const { default: App } = await import('../src/App.jsx')
 const { AppProvider } = await import('../src/context/AppContext.jsx')
 const { seedDatabase, ensureSettings, db } = await import('../src/db/db.js')
-const { getDayTotals, addTrip, settleRemittance, updateDispatchEntry } = await import('../src/db/actions.js')
+const {
+  getDayTotals,
+  addTrip,
+  settleRemittance,
+  updateDispatchEntry,
+  deleteLedgerEntry,
+  updateSettings,
+  updateComplianceRecord,
+  buildBackup,
+  restoreBackup
+} = await import('../src/db/actions.js')
 const { localISO } = await import('../src/lib/format.js')
 
 await seedDatabase()
@@ -103,7 +113,37 @@ assert((await db.remittances.where('[vehicleId+date]').equals([vehicle.id, local
 const queueEntry = await db.dispatch.toCollection().first()
 await updateDispatchEntry(queueEntry.id, { status: 'boarding' }, { name: 'Smoke Marshal', role: 'field' })
 assert((await db.dispatch.get(queueEntry.id))?.status === 'boarding', 'field marshal can update dispatch state')
-await db.trips.delete(tripId)
 
+// Role boundaries are enforced in the data layer, not only in the UI.
+const field = { name: 'Smoke Marshal', role: 'field' }
+const owner = { name: 'Smoke Owner', role: 'owner' }
+const mustReject = async (task, label) => {
+  let rejected = false
+  try { await task() } catch { rejected = true }
+  assert(rejected, label)
+}
+
+await mustReject(() => settleRemittance(vehicle.id, localISO(), field), 'field cannot settle remittances')
+await mustReject(() => deleteLedgerEntry('trips', tripId, field), 'field cannot delete ledger entries')
+await mustReject(() => updateSettings({ dailyTarget: 999 }, field), 'field cannot change daily targets')
+await mustReject(() => updateComplianceRecord(vehicle.id, { mileage: 1 }, field), 'field cannot edit compliance dates')
+
+const originalStage = (await db.dispatch.get(queueEntry.id))?.stage
+await updateDispatchEntry(queueEntry.id, { stage: 'Nairobi Stage' }, field)
+assert((await db.dispatch.get(queueEntry.id))?.stage === originalStage, 'field cannot reassign a vehicle stage')
+
+const originalTarget = (await db.settings.get('dailyTarget'))?.value
+await updateSettings({ dailyTarget: 20000 }, owner)
+assert((await db.settings.get('dailyTarget'))?.value === 20000, 'owner can update daily targets')
+await updateSettings({ dailyTarget: originalTarget }, owner)
+
+const rows = await Promise.all(db.tables.map(async (table) => ({ name: table.name, rows: await table.toArray() })))
+const backup = buildBackup(rows, await ensureSettings())
+assert(backup.app === 'MatatuPulse' && backup.tables.trips.length >= 20, 'JSON backup captures every local table')
+await mustReject(() => restoreBackup(backup, field), 'field cannot restore backups')
+await restoreBackup(backup, owner)
+assert((await db.trips.count()) === backup.tables.trips.length, 'owner backup restore round-trips record counts')
+
+await db.trips.delete(tripId)
 console.log('All smoke checks passed.')
 process.exit(0)
