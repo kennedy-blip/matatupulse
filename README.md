@@ -76,7 +76,7 @@ The Capacitor project lives in `android/`. The `.github/workflows/android-apk.ym
 
 1. builds the same static bundle,
 2. runs `npx cap sync android`,
-3. compiles the APK with Java 17 + Android SDK 36,
+3. compiles the APK with Java 21 + Android SDK 36,
 4. uploads it as a workflow artifact, and
 5. attaches `matatupulse.apk` to a GitHub release when a `v*` tag is pushed.
 

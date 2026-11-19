@@ -21,8 +21,8 @@ db.version(1).stores({
 export const DEFAULT_SETTINGS = {
   theme: 'neon',
   role: 'owner',
-  dailyTarget: 45000,
-  expenseLimit: 18000,
+  dailyTarget: 18000,
+  expenseLimit: 12000,
   dispatchIntervalMin: 12,
   stage: 'Meru Main Stage',
   ownerName: 'Wakama SACCO',
